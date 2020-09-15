@@ -4,9 +4,9 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common';
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
@@ -18,31 +18,31 @@ export class CoffeesController {
   constructor(private readonly coffeesService: CoffeesService) {}
 
   @Get()
-  findAll(@Query() paginationQuery): Coffee[] {
+  findAll(): Promise<Coffee[]> {
     // const { limit, offset } = paginationQuery;
     return this.coffeesService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Coffee {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Coffee> {
     return this.coffeesService.findOne(id);
   }
 
   @Post()
   create(@Body() createCoffeeDto: CreateCoffeeDto): void {
-    return this.coffeesService.create(createCoffeeDto);
+    this.coffeesService.create(createCoffeeDto);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateCoffeeDto: UpdateCoffeeDto,
-  ): Coffee {
+  ): Promise<Coffee> {
     return this.coffeesService.update(id, updateCoffeeDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): void {
+  remove(@Param('id', ParseIntPipe) id: number): any {
     return this.coffeesService.remove(id);
   }
 }
