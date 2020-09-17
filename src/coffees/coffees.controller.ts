@@ -3,12 +3,15 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Query,
 } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
@@ -17,7 +20,11 @@ import { Coffee } from './entities/coffee.entity';
 
 @Controller('coffees')
 export class CoffeesController {
-  constructor(private readonly coffeesService: CoffeesService) {}
+  constructor(
+    private readonly coffeesService: CoffeesService,
+    // in such way we can obtain and use all data related to each request
+    @Inject(REQUEST) private readonly request: Request,
+  ) {}
 
   @Get()
   findAll(@Query() paginationQuery: PaginationQueryDto): Promise<Coffee[]> {
